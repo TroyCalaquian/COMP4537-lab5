@@ -14,16 +14,16 @@ const connection = mysql.createConnection({
 // ChatGPT was used when creating this function
 http
   .createServer(function (req, res) {
-    res.writeHead(200, { "Content-Type": "application/json" });
     connection.connect((err) => {
       if (err) {
+        // TODO: Change to sending error and front facing string
         console.log("Connection error message: " + err.message);
         return;
       }
 
       // If connection is successful, execute the SQL statement to create the table
       const createTableQuery = `
-            CREATE TABLE IF NOT EXISTS your_table_name (
+            CREATE TABLE IF NOT EXISTS PATIENTS (
               patientID INT AUTO_INCREMENT PRIMARY KEY,
               name VARCHAR(255),
               dob DATE
@@ -39,17 +39,54 @@ http
         }
 
         // If table creation is successful, send a success response to the client
-        const message = "Table created successfully!";
-        res.end(message);
         console.log("Table created successfully!");
       });
 
-      if (req.method === GET) {
+      if (req.url === "/lab5/api/v1/sql") {
+        if (req.method === GET) {
+          const statement = url.parse(req.url, true);
+          const query = statement.query["query"];
+          const decodedQuery = decodeURIComponent(query);
+          const splitQuery = decodedQuery.split(" ");
+          if (splitQuery[0].toLowerCase() === "select") {
+            connection.query(decodedQuery, (err, result) => {
+              if (err) {
+                res.end("Bad query");
+                return;
+              }
 
-      }
+              res.writeHead(200, {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+              });
 
-      if (req.method === POST) {
-        
+              const jsonResult = JSON.stringify({ results: result });
+              res.end(jsonResult);
+            });
+          } else {
+            res.writeHead(400, {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "*",
+            });
+            // TODO: Front facing string
+            res.end(
+              JSON.stringify({ error: "Only Select Queries are allowed" })
+            );
+          }
+        }
+
+        if (req.method === POST) {
+
+        }
+      } else {
+        res.writeHead(404, {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "*",
+        });
+        res.end(JSON.stringify({ error: "Page not found!" }));
       }
     });
     connection.end();
