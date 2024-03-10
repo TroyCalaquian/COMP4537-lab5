@@ -92,49 +92,51 @@ http
       req.on('data', chunk => {
         data += chunk;
       });
-      try {
-        const jsonData = JSON.parse(data)
-        const query = jsonData.query.trim()
-        console.log("Query: " + query)
-        const splitQuery = query.split(" ")
-        if (splitQuery[0].toUpperCase() === "INSERT") {
-          connection.query(query, (err, result) => {
-            if (err) {
-              res.writeHead(400, {
+
+      req.on('end', () => {
+        try {
+          const jsonData = JSON.parse(data)
+          const query = jsonData.query.trim()
+          console.log("Query: " + query)
+          const splitQuery = query.split(" ")
+          if (splitQuery[0].toUpperCase() === "INSERT") {
+            connection.query(query, (err, result) => {
+              if (err) {
+                res.writeHead(400, {
+                  "Content-Type": "application/json",
+                  "Access-Control-Allow-Origin": "*",
+                  "Access-Control-Allow-Methods": "*",
+                });
+                res.end(JSON.stringify({ error: "Bad query: " + err.message }));
+                return;
+              }
+  
+              res.writeHead(200, {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "*",
               });
-              res.end(JSON.stringify({ error: "Bad query: " + err.message }));
-              return;
-            }
-
-            res.writeHead(200, {
+  
+              const jsonResult = JSON.stringify({results: result})
+              res.end(jsonResult)
+            })
+          } else {
+            res.writeHead(400, {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
               "Access-Control-Allow-Methods": "*",
             });
-
-            const jsonResult = JSON.stringify({results: result})
-            res.end(jsonResult)
-          })
-        } else {
-          res.writeHead(400, {
+            res.end(JSON.stringify({ error: "Only INSERT queries are allowed" }));
+          }
+        } catch (error) {
+          res.writeHead(500, {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Methods": "*"
           });
-          res.end(JSON.stringify({ error: "Only INSERT queries are allowed" }));
+          res.end(JSON.stringify({error: "Error parsing JSON data: " + error.message}));
         }
-      } catch (error) {
-        res.writeHead(500, {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "*"
-        });
-        res.end(JSON.stringify({error: "Error parsing JSON data: " + error.message}));
-      }
-
+      })
     } else {
       res.writeHead(404, {
         "Content-Type": "application/json",
