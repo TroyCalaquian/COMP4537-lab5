@@ -43,41 +43,39 @@ connection.connect((err) => {
 // ChatGPT was used when creating this function
 http
   .createServer(function (req, res) {
-    if (req.url === "/test") {
-      res.end("Test works")
-    }
     if (req.url === "/lab5/api/v1/sql") {
-      if (req.method === GET) {
-        const statement = url.parse(req.url, true);
-        const query = statement.query["query"];
-        const decodedQuery = decodeURIComponent(query);
-        const splitQuery = decodedQuery.split(" ");
-        if (splitQuery[0].toLowerCase() === "select") {
-          connection.query(decodedQuery, (err, result) => {
-            if (err) {
-              res.end("Bad query");
-              return;
-            }
+      res.end("It works")
+      // if (req.method === GET) {
+      //   const statement = url.parse(req.url, true);
+      //   const query = statement.query["query"];
+      //   const decodedQuery = decodeURIComponent(query);
+      //   const splitQuery = decodedQuery.split(" ");
+      //   if (splitQuery[0].toLowerCase() === "select") {
+      //     connection.query(decodedQuery, (err, result) => {
+      //       if (err) {
+      //         res.end("Bad query");
+      //         return;
+      //       }
 
-            res.writeHead(200, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*",
-              "Access-Control-Allow-Methods": "*",
-            });
+      //       res.writeHead(200, {
+      //         "Content-Type": "application/json",
+      //         "Access-Control-Allow-Origin": "*",
+      //         "Access-Control-Allow-Methods": "*",
+      //       });
 
-            const jsonResult = JSON.stringify({ results: result });
-            res.end(jsonResult);
-          });
-        } else {
-          res.writeHead(400, {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
-          });
-          // TODO: Front facing string
-          res.end(JSON.stringify({ error: "Only Select Queries are allowed" }));
-        }
-      }
+      //       const jsonResult = JSON.stringify({ results: result });
+      //       res.end(jsonResult);
+      //     });
+      //   } else {
+      //     res.writeHead(400, {
+      //       "Content-Type": "application/json",
+      //       "Access-Control-Allow-Origin": "*",
+      //       "Access-Control-Allow-Methods": "*",
+      //     });
+      //     // TODO: Front facing string
+      //     res.end(JSON.stringify({ error: "Only Select Queries are allowed" }));
+      //   }
+      // }
 
       // if (req.method === POST) {
       //   let data = ' ';
