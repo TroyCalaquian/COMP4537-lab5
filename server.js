@@ -43,12 +43,12 @@ connection.connect((err) => {
 // ChatGPT was used when creating this function
 http
   .createServer(function (req, res) {
-    if (req.method === GET && req.url === "/lab5/api/v1/sql/") {
+    if (req.method === GET && req.url === "/lab5/api/v1/sql") {
       const statement = url.parse(req.url, true);
       const query = statement.query["query"];
       const decodedQuery = decodeURIComponent(query);
       const splitQuery = decodedQuery.split(" ");
-      if (splitQuery[0].toLowerCase() === "select") {
+      if (splitQuery[0].toUpperCase() === "SELECT") {
         connection.query(decodedQuery, (err, result) => {
           if (err) {
             res.end("Bad query");
@@ -86,8 +86,8 @@ http
       //     }
       //   })
       // }
-    } else if (req.method === POST && req.url === "/lab5/api/v1/sql/") {
-      
+    } else if (req.method === POST && req.url === "/lab5/api/v1/sql") {
+
     } else {
       res.writeHead(400, {
         "Content-Type": "application/json",
