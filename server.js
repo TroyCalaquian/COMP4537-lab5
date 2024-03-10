@@ -59,7 +59,7 @@ http
       const decodedQuery = decodeURIComponent(query);
       const splitQuery = decodedQuery.split(" ");
       console.log("Statement: " + splitQuery[0])
-      if (splitQuery[0].toUpperCase() === "SELECT") {
+      if (splitQuery[0].toUpperCase().trim() === "SELECT") {
         connection.query(decodedQuery, (err, result) => {
           if (err) {
             res.writeHead(400, {
