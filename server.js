@@ -93,6 +93,7 @@ http
         query += chunk;
       });
       try {
+        console.log("Query: " + query)
         const splitQuery = query.split(" ")
         if (splitQuery[0].toUpperCase() === "INSERT") {
           connection.query(query, (err, result) => {
