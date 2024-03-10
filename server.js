@@ -88,11 +88,13 @@ http
         res.end(JSON.stringify({ error: "Only SELECT queries are allowed" }));
       }
     } else if (req.method === POST && req.url.startsWith("/lab5/api/v1/sql")) {
-      let query = '';
+      let data = '';
       req.on('data', chunk => {
-        query += chunk;
+        data += chunk;
       });
       try {
+        const jsonData = JSON.parse(data);
+        const query = jsonData.query.trim();
         const splitQuery = query.split(" ")
         if (splitQuery[0].toUpperCase() === "INSERT") {
           connection.query(query, (err, result) => {
@@ -122,7 +124,7 @@ http
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "*"
         });
-        res.end(JSON.stringify({error: "Error parsing query: " + error.message}));
+        res.end(JSON.stringify({error: "Error parsing JSON data: " + error.message}));
       }
 
     } else {
