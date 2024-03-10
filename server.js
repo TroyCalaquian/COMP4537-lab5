@@ -87,6 +87,44 @@ http
         });
         res.end(JSON.stringify({ error: "Only SELECT queries are allowed" }));
       }
+    } else if (req.method === POST && req.url.startsWith("/lab5/api/v1/sql")) {
+      let query = '';
+      req.on('data', chunk => {
+        query += chunk;
+      });
+      try {
+        const splitQuery = query.split(" ")
+        if (splitQuery[0].toUpperCase() === "INSERT") {
+          connection.query(query, (err, result) => {
+            if (err) {
+              res.writeHead(400, {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+              });
+              res.end(JSON.stringify({ error: "Bad query: " + err.message }));
+              return;
+            }
+
+            res.writeHead(200, {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "*",
+            });
+
+            const jsonResult = JSON.stringify({results: result})
+            res.end(jsonResult)
+          })
+        }
+      } catch (error) {
+        res.writeHead(500, {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "*"
+        });
+        res.end(JSON.stringify({error: "Error parsing query: " + error.message}));
+      }
+
     } else {
       res.writeHead(404, {
         "Content-Type": "application/json",
