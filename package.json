@@ -1,0 +1,11 @@
+{
+  "name": "lab5",
+  "version": "1.0.0",
+  "description": "Lab5",
+  "main": "server2.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Troy Calaquian",
+  "license": "ISC"
+}
