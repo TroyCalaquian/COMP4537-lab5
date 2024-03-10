@@ -43,7 +43,7 @@ connection.connect((err) => {
 // ChatGPT was used when creating this function
 http
   .createServer(function (req, res) {
-    if (req.url === "/lab5/api/v1/sql") {
+    if (req.url === "/lab5/api/v1/sql/") {
       if (req.method === GET) {
         const statement = url.parse(req.url, true);
         const query = statement.query["query"];
