@@ -58,6 +58,7 @@ http
 
       const decodedQuery = decodeURIComponent(query);
       const splitQuery = decodedQuery.split(" ");
+      console.log("Splitted query: " + splitQuery)
       if (splitQuery[0].toUpperCase() === "SELECT") {
         connection.query(decodedQuery, (err, result) => {
           if (err) {
