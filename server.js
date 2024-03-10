@@ -58,8 +58,7 @@ http
 
       const decodedQuery = decodeURIComponent(query);
       const splitQuery = decodedQuery.split(" ");
-      console.log("Statement: " + splitQuery[0])
-      if (splitQuery[0].toUpperCase().trim() === "SELECT") {
+      if (splitQuery[0].toUpperCase() === "SELECT") {
         connection.query(decodedQuery, (err, result) => {
           if (err) {
             res.writeHead(400, {
@@ -67,7 +66,7 @@ http
               "Access-Control-Allow-Origin": "*",
               "Access-Control-Allow-Methods": "*",
             });
-            res.end(JSON.stringify({ error: "Bad query" }));
+            res.end(JSON.stringify({ error: "Bad query: " + err.message }));
             return;
           }
 
