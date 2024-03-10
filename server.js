@@ -1,6 +1,7 @@
 const mysql = require("mysql2");
 const url = require("url");
 const http = require("http");
+const strings = require('./lang/messages/en/user');
 const GET = "GET";
 const POST = "POST";
 
@@ -13,7 +14,6 @@ const connection = mysql.createConnection({
 
 connection.connect((err) => {
   if (err) {
-    // TODO: Change to sending error and front facing string
     console.log("Connection error message: " + err.message);
     return;
   }
@@ -30,7 +30,7 @@ connection.connect((err) => {
   connection.query(createTableQuery, (err, result) => {
     if (err) {
       // If there's an error creating the table, send an error response to the client
-      res.end("Error: Unable to create the table");
+      res.end(JSON.stringify({error: `${strings.messages.tableCreationError} ${err.message}`}));
       console.log("Error creating table: " + err.message);
       return;
     }
@@ -52,7 +52,7 @@ http
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "*",
         });
-        res.end(JSON.stringify({ error: "No query provided" }));
+        res.end(JSON.stringify({ error: `${strings.messages.noQueryProvided}` }));
         return;
       }
 
@@ -66,7 +66,7 @@ http
               "Access-Control-Allow-Origin": "*",
               "Access-Control-Allow-Methods": "*",
             });
-            res.end(JSON.stringify({ error: "Bad query: " + err.message }));
+            res.end(JSON.stringify({ error: `${strings.messages.badQuery}: ${err.message}` }));
             return;
           }
 
@@ -85,7 +85,7 @@ http
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "*",
         });
-        res.end(JSON.stringify({ error: "Only SELECT queries are allowed" }));
+        res.end(JSON.stringify({ error: strings.messages.selectOnly }));
       }
     } else if (req.method === POST && req.url.startsWith("/lab5/api/v1/sql")) {
       let data = '';
@@ -107,7 +107,7 @@ http
                   "Access-Control-Allow-Origin": "*",
                   "Access-Control-Allow-Methods": "*",
                 });
-                res.end(JSON.stringify({ error: "Bad query: " + err.message }));
+                res.end(JSON.stringify({ error: `${strings.messages.badQuery}: ${err.message}` }));
                 return;
               }
   
@@ -126,7 +126,7 @@ http
               "Access-Control-Allow-Origin": "*",
               "Access-Control-Allow-Methods": "*",
             });
-            res.end(JSON.stringify({ error: "Only INSERT queries are allowed" }));
+            res.end(JSON.stringify({ error: strings.messages.insertOnly }));
           }
         } catch (error) {
           res.writeHead(500, {
@@ -134,7 +134,7 @@ http
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "*"
           });
-          res.end(JSON.stringify({error: "Error parsing JSON data: " + error.message}));
+          res.end(JSON.stringify({error: `${strings.messages.JSONerror}: ${error.message}` }));
         }
       })
     } else {
@@ -143,7 +143,7 @@ http
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "*",
       });
-      res.end(JSON.stringify({ error: "Page not found!" }));
+      res.end(JSON.stringify({ error: strings.messages.pageNotFound }));
     }
   })
   .listen(8888);
@@ -154,17 +154,3 @@ process.on("SIGINT", () => {
   console.log("Server stopped. Database connection closed.");
   process.exit();
 });
-
-// CODE:
-// server {
-//     server_name comp4537labs.com www.comp4537labs.com;
-
-//     location / {
-//         proxy_pass http://localhost:8888;
-//         proxy_http_version 1.1;
-//         proxy_set_header Upgrade $http_upgrade;
-//         proxy_set_header Connection 'upgrade';
-//         proxy_set_header Host $host;
-//         proxy_cache_bypass $http_upgrade;
-//     }
-// }
