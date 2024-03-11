@@ -51,6 +51,7 @@ const server = http
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "*",
+          "Access-Control-Allow-Headers": "*",
         });
         res.end(JSON.stringify({ error: `${strings.messages.noQueryProvided}` }));
         return;
@@ -65,6 +66,7 @@ const server = http
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
               "Access-Control-Allow-Methods": "*",
+              "Access-Control-Allow-Headers": "*",
             });
             res.end(JSON.stringify({ error: `${strings.messages.badQuery}: ${err.message}` }));
             return;
@@ -74,6 +76,7 @@ const server = http
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
           });
 
           const jsonResult = JSON.stringify({ results: result });
@@ -84,6 +87,7 @@ const server = http
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "*",
+          "Access-Control-Allow-Headers": "*",
         });
         res.end(JSON.stringify({ error: strings.messages.selectOnly }));
       }
@@ -106,6 +110,7 @@ const server = http
                   "Content-Type": "application/json",
                   "Access-Control-Allow-Origin": "*",
                   "Access-Control-Allow-Methods": "*",
+                  "Access-Control-Allow-Headers": "*",
                 });
                 res.end(JSON.stringify({ error: `${strings.messages.badQuery}: ${err.message}` }));
                 return;
@@ -115,6 +120,7 @@ const server = http
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
               });
   
               const jsonResult = JSON.stringify({results: result})
@@ -125,6 +131,7 @@ const server = http
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
               "Access-Control-Allow-Methods": "*",
+              "Access-Control-Allow-Headers": "*",
             });
             res.end(JSON.stringify({ error: strings.messages.insertOnly }));
           }
@@ -132,7 +139,8 @@ const server = http
           res.writeHead(500, {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*"
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
           });
           res.end(JSON.stringify({error: `${strings.messages.JSONerror}: ${error.message}` }));
         }
@@ -142,6 +150,7 @@ const server = http
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "*",
       });
       res.end(JSON.stringify({ error: strings.messages.pageNotFound }));
     }
