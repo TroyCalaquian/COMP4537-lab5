@@ -41,7 +41,7 @@ connection.connect((err) => {
 });
 
 // ChatGPT was used when creating this function
-http
+const server = http
   .createServer(function (req, res) {
     if (req.method === GET && req.url.startsWith("/lab5/api/v1/sql")) {
       const parsedUrl = url.parse(req.url, true);
@@ -150,7 +150,9 @@ http
 
 // Close the database connection when the server is stopped
 process.on("SIGINT", () => {
-  connection.end();
-  console.log("Server stopped. Database connection closed.");
-  process.exit();
+  server.close(() => {
+    connection.end();
+    console.log("Server stopped. Database connection closed.");
+    process.exit();
+  })
 });
