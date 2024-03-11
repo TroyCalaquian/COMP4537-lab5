@@ -1,7 +1,7 @@
 const mysql = require("mysql2");
 const url = require("url");
 const http = require("http");
-const strings = require('./lang/messages/en/user');
+const strings = require("./lang/messages/en/user");
 const GET = "GET";
 const POST = "POST";
 
@@ -30,7 +30,11 @@ connection.connect((err) => {
   connection.query(createTableQuery, (err, result) => {
     if (err) {
       // If there's an error creating the table, send an error response to the client
-      res.end(JSON.stringify({error: `${strings.messages.tableCreationError} ${err.message}`}));
+      res.end(
+        JSON.stringify({
+          error: `${strings.messages.tableCreationError} ${err.message}`,
+        })
+      );
       console.log("Error creating table: " + err.message);
       return;
     }
@@ -47,13 +51,21 @@ const server = http
       const parsedUrl = url.parse(req.url, true);
       const query = parsedUrl.query["query"];
       if (!query) {
-        res.writeHead(400, {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "*",
-          "Access-Control-Allow-Headers": "*",
-        });
-        res.end(JSON.stringify({ error: `${strings.messages.noQueryProvided}` }));
+        // res.writeHead(400, {
+        //   "Content-Type": "application/json",
+        //   "Access-Control-Allow-Origin": "*",
+        //   "Access-Control-Allow-Methods": "*",
+        //   "Access-Control-Allow-Headers": "*",
+        // });
+        res.statusCode = 400; // Set the status code to 400
+        res.setHeader("Content-Type", "application/json"); // Set the Content-Type header
+        res.setHeader("Access-Control-Allow-Origin", "*"); // Set the Access-Control-Allow-Origin header
+        res.setHeader("Access-Control-Allow-Methods", "*"); // Set the Access-Control-Allow-Methods header
+        res.setHeader("Access-Control-Allow-Headers", "*"); // Set the Access-Control-Allow-Headers header
+
+        res.end(
+          JSON.stringify({ error: `${strings.messages.noQueryProvided}` })
+        );
         return;
       }
 
@@ -62,96 +74,106 @@ const server = http
       if (splitQuery[0].toUpperCase() === "SELECT") {
         connection.query(decodedQuery, (err, result) => {
           if (err) {
-            res.writeHead(400, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*",
-              "Access-Control-Allow-Methods": "*",
-              "Access-Control-Allow-Headers": "*",
-            });
-            res.end(JSON.stringify({ error: `${strings.messages.badQuery}: ${err.message}` }));
+            res.statusCode = 400; // Set the status code to 400
+            res.setHeader("Content-Type", "application/json"); // Set the Content-Type header
+            res.setHeader("Access-Control-Allow-Origin", "*"); // Set the Access-Control-Allow-Origin header
+            res.setHeader("Access-Control-Allow-Methods", "*"); // Set the Access-Control-Allow-Methods header
+            res.setHeader("Access-Control-Allow-Headers", "*"); // Set the Access-Control-Allow-Headers header
+
+            res.end(
+              JSON.stringify({
+                error: `${strings.messages.badQuery}: ${err.message}`,
+              })
+            );
             return;
           }
 
-          res.writeHead(200, {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
-            "Access-Control-Allow-Headers": "*",
-          });
+          res.statusCode = 200; // Set the status code to 200
+          res.setHeader("Content-Type", "application/json"); // Set the Content-Type header
+          res.setHeader("Access-Control-Allow-Origin", "*"); // Set the Access-Control-Allow-Origin header
+          res.setHeader("Access-Control-Allow-Methods", "*"); // Set the Access-Control-Allow-Methods header
+          res.setHeader("Access-Control-Allow-Headers", "*"); // Set the Access-Control-Allow-Headers header
 
           const jsonResult = JSON.stringify({ results: result });
           res.end(jsonResult);
         });
       } else {
-        res.writeHead(400, {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "*",
-          "Access-Control-Allow-Headers": "*",
-        });
+        res.statusCode = 400; // Set the status code to 400
+        res.setHeader("Content-Type", "application/json"); // Set the Content-Type header
+        res.setHeader("Access-Control-Allow-Origin", "*"); // Set the Access-Control-Allow-Origin header
+        res.setHeader("Access-Control-Allow-Methods", "*"); // Set the Access-Control-Allow-Methods header
+        res.setHeader("Access-Control-Allow-Headers", "*"); // Set the Access-Control-Allow-Headers header
+
         res.end(JSON.stringify({ error: strings.messages.selectOnly }));
       }
     } else if (req.method === POST && req.url.startsWith("/lab5/api/v1/sql")) {
-      let data = '';
-      req.on('data', chunk => {
+      let data = "";
+      req.on("data", (chunk) => {
         data += chunk;
       });
 
-      req.on('end', () => {
+      req.on("end", () => {
         try {
-          const jsonData = JSON.parse(data)
-          const query = jsonData.query.trim()
-          console.log("Query: " + query)
-          const splitQuery = query.split(" ")
+          const jsonData = JSON.parse(data);
+          const query = jsonData.query.trim();
+          console.log("Query: " + query);
+          const splitQuery = query.split(" ");
           if (splitQuery[0].toUpperCase() === "INSERT") {
             connection.query(query, (err, result) => {
               if (err) {
-                res.writeHead(400, {
-                  "Content-Type": "application/json",
-                  "Access-Control-Allow-Origin": "*",
-                  "Access-Control-Allow-Methods": "*",
-                  "Access-Control-Allow-Headers": "*",
-                });
-                res.end(JSON.stringify({ error: `${strings.messages.badQuery}: ${err.message}` }));
+                res.statusCode = 400; // Set the status code to 400
+                res.setHeader("Content-Type", "application/json"); // Set the Content-Type header
+                res.setHeader("Access-Control-Allow-Origin", "*"); // Set the Access-Control-Allow-Origin header
+                res.setHeader("Access-Control-Allow-Methods", "*"); // Set the Access-Control-Allow-Methods header
+                res.setHeader("Access-Control-Allow-Headers", "*"); // Set the Access-Control-Allow-Headers header
+
+                res.end(
+                  JSON.stringify({
+                    error: `${strings.messages.badQuery}: ${err.message}`,
+                  })
+                );
                 return;
               }
-  
-              res.writeHead(200, {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-              });
-  
-              const jsonResult = JSON.stringify({results: result})
-              res.end(jsonResult)
-            })
-          } else {
-            res.writeHead(400, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*",
-              "Access-Control-Allow-Methods": "*",
-              "Access-Control-Allow-Headers": "*",
+
+              res.statusCode = 200; // Set the status code to 200
+              res.setHeader("Content-Type", "application/json"); // Set the Content-Type header
+              res.setHeader("Access-Control-Allow-Origin", "*"); // Set the Access-Control-Allow-Origin header
+              res.setHeader("Access-Control-Allow-Methods", "*"); // Set the Access-Control-Allow-Methods header
+              res.setHeader("Access-Control-Allow-Headers", "*"); // Set the Access-Control-Allow-Headers header
+
+              const jsonResult = JSON.stringify({ results: result });
+              res.end(jsonResult);
             });
+          } else {
+            res.statusCode = 400; // Set the status code to 400
+            res.setHeader("Content-Type", "application/json"); // Set the Content-Type header
+            res.setHeader("Access-Control-Allow-Origin", "*"); // Set the Access-Control-Allow-Origin header
+            res.setHeader("Access-Control-Allow-Methods", "*"); // Set the Access-Control-Allow-Methods header
+            res.setHeader("Access-Control-Allow-Headers", "*"); // Set the Access-Control-Allow-Headers header
+
             res.end(JSON.stringify({ error: strings.messages.insertOnly }));
           }
         } catch (error) {
-          res.writeHead(500, {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
-            "Access-Control-Allow-Headers": "*",
-          });
-          res.end(JSON.stringify({error: `${strings.messages.JSONerror}: ${error.message}` }));
+          res.statusCode = 500; // Set the status code to 500
+          res.setHeader("Content-Type", "application/json"); // Set the Content-Type header
+          res.setHeader("Access-Control-Allow-Origin", "*"); // Set the Access-Control-Allow-Origin header
+          res.setHeader("Access-Control-Allow-Methods", "*"); // Set the Access-Control-Allow-Methods header
+          res.setHeader("Access-Control-Allow-Headers", "*"); // Set the Access-Control-Allow-Headers header
+
+          res.end(
+            JSON.stringify({
+              error: `${strings.messages.JSONerror}: ${error.message}`,
+            })
+          );
         }
-      })
-    } else {
-      res.writeHead(404, {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "*",
-        "Access-Control-Allow-Headers": "*",
       });
+    } else {
+      res.statusCode = 404; // Set the status code to 404
+      res.setHeader("Content-Type", "application/json"); // Set the Content-Type header
+      res.setHeader("Access-Control-Allow-Origin", "*"); // Set the Access-Control-Allow-Origin header
+      res.setHeader("Access-Control-Allow-Methods", "*"); // Set the Access-Control-Allow-Methods header
+      res.setHeader("Access-Control-Allow-Headers", "*"); // Set the Access-Control-Allow-Headers header
+
       res.end(JSON.stringify({ error: strings.messages.pageNotFound }));
     }
   })
@@ -163,5 +185,5 @@ process.on("SIGINT", () => {
     connection.end();
     console.log("Server stopped. Database connection closed.");
     process.exit();
-  })
+  });
 });
